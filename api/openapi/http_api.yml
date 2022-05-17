@@ -1,0 +1,266 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Blackjack
+  description: TODO
+servers:
+  - url: https://{hostname}/api
+    variables:
+      hostname:
+        default: localhost
+paths:
+  /player:
+    get:
+      operationId: playerGet
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: login
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Player data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+        '401':
+          description: Authorization information is missing or invalid.
+
+        '404':
+          description: A player with the specified login was not found.
+
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /player/create:
+    post:
+      operationId: playerCreate
+      requestBody:
+        description: Authorization data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerCreatePayload'
+      responses:
+        '200':
+          description: Player data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+        '409':
+          description: A player with the given login is already exists
+
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /player/stats:
+    get:
+      operationId: playerStats
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: login
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+
+        '401':
+          description: Authorization information is missing or invalid.
+
+        '404':
+          description: A player with the specified login was not found.
+
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /game/action:
+    post:
+      operationId: gameMakeAction
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        description: Player action
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameMakeActionPayload'
+      responses:
+        '200':
+          description: Action is performed successfully
+
+        '401':
+          description: Authorization information is missing or invalid.
+
+        '404':
+          description: A player with the specified login was not found.
+
+        '406':
+          description: Action is not allowed at the current state of the game
+
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /game/state:
+    get:
+      operationId: gameGetState
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: login
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+
+        '401':
+          description: Authorization information is missing or invalid.
+
+        '404':
+          description: A player with the specified login was not found.
+
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
+  schemas:
+    PlayerCreatePayload:
+      type: object
+      required: [ login, password ]
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      additionalProperties: false
+
+    Player:
+      type: object
+      required: [ balance ]
+      properties:
+        balance:
+          type: integer
+          format: int64
+      additionalProperties: false
+
+    Stats:
+      type: object
+      required: [ total_wins, total_loses, history ]
+      properties:
+        total_wins:
+          type: integer
+          format: int64
+        total_loses:
+          type: integer
+          format: int64
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatsRecord'
+      additionalProperties: false
+
+    StatsRecord:
+      type: object
+      required: [ time, result, balance ]
+      properties:
+        time:
+          type: string
+          format: date-time
+        result:
+          type: string
+          enum: [ win, lose, tie ]
+        balance:
+          type: integer
+          format: int64
+      additionalProperties: false
+
+    GameAction:
+      type: string
+      enum: [ enter, bet, stand, hit, double_down, win, lose, tie ]
+
+    GameMakeActionPayload:
+      type: object
+      required: [ login, serial_id, action ]
+      properties:
+        login:
+          type: string
+        serial_id:
+          type: integer
+          format: int64
+        action:
+          $ref: '#/components/schemas/GameAction'
+        args_json:
+          type: string
+      additionalProperties: false
+
+    GameState:
+      type: object
+      required: [ serial_id, description_json, allowed_actions ]
+      properties:
+        serial_id:
+          type: integer
+          format: int64
+        description_json:
+          type: string
+        allowed_actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GameAction'
+      additionalProperties: false
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+      additionalProperties: false
