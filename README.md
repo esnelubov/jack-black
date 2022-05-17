@@ -1,5 +1,3 @@
-migrate -path ./migrations -database postgres://postgres:postgres@localhost:5432/postgres?x-migrations-table=jack_black_migrations up
-
 # JackBlack
 
 A little REST blackjack game
