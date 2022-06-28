@@ -14,7 +14,7 @@ type PlayerHandler struct {
 	playerRepo *player.Repository
 }
 
-func NewPlayerGetHandler(entryRepo *entry.Repository, playerRepo *player.Repository) *PlayerHandler {
+func NewPlayerHandler(entryRepo *entry.Repository, playerRepo *player.Repository) *PlayerHandler {
 	return &PlayerHandler{entryRepo: entryRepo, playerRepo: playerRepo}
 }
 

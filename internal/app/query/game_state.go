@@ -18,7 +18,7 @@ type GameStateHandler struct {
 	sessionRepo *session.Repository
 }
 
-func NewGameGetStateHandler(entryRepo *entry.Repository, playerRepo *player.Repository, sessionRepo *session.Repository) *GameStateHandler {
+func NewGameStateHandler(entryRepo *entry.Repository, playerRepo *player.Repository, sessionRepo *session.Repository) *GameStateHandler {
 	return &GameStateHandler{entryRepo: entryRepo, playerRepo: playerRepo, sessionRepo: sessionRepo}
 }
 

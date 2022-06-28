@@ -57,9 +57,9 @@ func NewApplication(ctx context.Context) *Application {
 			GameMakeAction: command.NewGameMakeActionHandler(entryRepository, playerRepository, sessionRepository, historyRepository),
 		},
 		Queries: Queries{
-			Player:      query.NewPlayerGetHandler(entryRepository, playerRepository),
+			Player:      query.NewPlayerHandler(entryRepository, playerRepository),
 			PlayerStats: query.NewPlayerStatsHandler(entryRepository, playerRepository, historyRepository),
-			GameState:   query.NewGameGetStateHandler(entryRepository, playerRepository, sessionRepository),
+			GameState:   query.NewGameStateHandler(entryRepository, playerRepository, sessionRepository),
 		},
 	}
 }
