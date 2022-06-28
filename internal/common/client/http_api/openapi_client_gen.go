@@ -95,11 +95,11 @@ type ClientInterface interface {
 
 	GameMakeAction(ctx context.Context, body GameMakeActionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GameGetState request
-	GameGetState(ctx context.Context, params *GameGetStateParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GameState request
+	GameState(ctx context.Context, params *GameStateParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// PlayerGet request
-	PlayerGet(ctx context.Context, params *PlayerGetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Player request
+	Player(ctx context.Context, params *PlayerParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PlayerCreate request with any body
 	PlayerCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -134,8 +134,8 @@ func (c *Client) GameMakeAction(ctx context.Context, body GameMakeActionJSONRequ
 	return c.Client.Do(req)
 }
 
-func (c *Client) GameGetState(ctx context.Context, params *GameGetStateParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGameGetStateRequest(c.Server, params)
+func (c *Client) GameState(ctx context.Context, params *GameStateParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGameStateRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +146,8 @@ func (c *Client) GameGetState(ctx context.Context, params *GameGetStateParams, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) PlayerGet(ctx context.Context, params *PlayerGetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPlayerGetRequest(c.Server, params)
+func (c *Client) Player(ctx context.Context, params *PlayerParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPlayerRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -234,8 +234,8 @@ func NewGameMakeActionRequestWithBody(server string, contentType string, body io
 	return req, nil
 }
 
-// NewGameGetStateRequest generates requests for GameGetState
-func NewGameGetStateRequest(server string, params *GameGetStateParams) (*http.Request, error) {
+// NewGameStateRequest generates requests for GameState
+func NewGameStateRequest(server string, params *GameStateParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -277,8 +277,8 @@ func NewGameGetStateRequest(server string, params *GameGetStateParams) (*http.Re
 	return req, nil
 }
 
-// NewPlayerGetRequest generates requests for PlayerGet
-func NewPlayerGetRequest(server string, params *PlayerGetParams) (*http.Request, error) {
+// NewPlayerRequest generates requests for Player
+func NewPlayerRequest(server string, params *PlayerParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -451,11 +451,11 @@ type ClientWithResponsesInterface interface {
 
 	GameMakeActionWithResponse(ctx context.Context, body GameMakeActionJSONRequestBody, reqEditors ...RequestEditorFn) (*GameMakeActionResponse, error)
 
-	// GameGetState request
-	GameGetStateWithResponse(ctx context.Context, params *GameGetStateParams, reqEditors ...RequestEditorFn) (*GameGetStateResponse, error)
+	// GameState request
+	GameStateWithResponse(ctx context.Context, params *GameStateParams, reqEditors ...RequestEditorFn) (*GameStateResponse, error)
 
-	// PlayerGet request
-	PlayerGetWithResponse(ctx context.Context, params *PlayerGetParams, reqEditors ...RequestEditorFn) (*PlayerGetResponse, error)
+	// Player request
+	PlayerWithResponse(ctx context.Context, params *PlayerParams, reqEditors ...RequestEditorFn) (*PlayerResponse, error)
 
 	// PlayerCreate request with any body
 	PlayerCreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PlayerCreateResponse, error)
@@ -488,7 +488,7 @@ func (r GameMakeActionResponse) StatusCode() int {
 	return 0
 }
 
-type GameGetStateResponse struct {
+type GameStateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *GameState
@@ -496,7 +496,7 @@ type GameGetStateResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r GameGetStateResponse) Status() string {
+func (r GameStateResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -504,14 +504,14 @@ func (r GameGetStateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GameGetStateResponse) StatusCode() int {
+func (r GameStateResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type PlayerGetResponse struct {
+type PlayerResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Player
@@ -519,7 +519,7 @@ type PlayerGetResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r PlayerGetResponse) Status() string {
+func (r PlayerResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -527,7 +527,7 @@ func (r PlayerGetResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PlayerGetResponse) StatusCode() int {
+func (r PlayerResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -537,7 +537,6 @@ func (r PlayerGetResponse) StatusCode() int {
 type PlayerCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Player
 	JSONDefault  *Error
 }
 
@@ -597,22 +596,22 @@ func (c *ClientWithResponses) GameMakeActionWithResponse(ctx context.Context, bo
 	return ParseGameMakeActionResponse(rsp)
 }
 
-// GameGetStateWithResponse request returning *GameGetStateResponse
-func (c *ClientWithResponses) GameGetStateWithResponse(ctx context.Context, params *GameGetStateParams, reqEditors ...RequestEditorFn) (*GameGetStateResponse, error) {
-	rsp, err := c.GameGetState(ctx, params, reqEditors...)
+// GameStateWithResponse request returning *GameStateResponse
+func (c *ClientWithResponses) GameStateWithResponse(ctx context.Context, params *GameStateParams, reqEditors ...RequestEditorFn) (*GameStateResponse, error) {
+	rsp, err := c.GameState(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGameGetStateResponse(rsp)
+	return ParseGameStateResponse(rsp)
 }
 
-// PlayerGetWithResponse request returning *PlayerGetResponse
-func (c *ClientWithResponses) PlayerGetWithResponse(ctx context.Context, params *PlayerGetParams, reqEditors ...RequestEditorFn) (*PlayerGetResponse, error) {
-	rsp, err := c.PlayerGet(ctx, params, reqEditors...)
+// PlayerWithResponse request returning *PlayerResponse
+func (c *ClientWithResponses) PlayerWithResponse(ctx context.Context, params *PlayerParams, reqEditors ...RequestEditorFn) (*PlayerResponse, error) {
+	rsp, err := c.Player(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePlayerGetResponse(rsp)
+	return ParsePlayerResponse(rsp)
 }
 
 // PlayerCreateWithBodyWithResponse request with arbitrary body returning *PlayerCreateResponse
@@ -667,15 +666,15 @@ func ParseGameMakeActionResponse(rsp *http.Response) (*GameMakeActionResponse, e
 	return response, nil
 }
 
-// ParseGameGetStateResponse parses an HTTP response from a GameGetStateWithResponse call
-func ParseGameGetStateResponse(rsp *http.Response) (*GameGetStateResponse, error) {
+// ParseGameStateResponse parses an HTTP response from a GameStateWithResponse call
+func ParseGameStateResponse(rsp *http.Response) (*GameStateResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GameGetStateResponse{
+	response := &GameStateResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -700,15 +699,15 @@ func ParseGameGetStateResponse(rsp *http.Response) (*GameGetStateResponse, error
 	return response, nil
 }
 
-// ParsePlayerGetResponse parses an HTTP response from a PlayerGetWithResponse call
-func ParsePlayerGetResponse(rsp *http.Response) (*PlayerGetResponse, error) {
+// ParsePlayerResponse parses an HTTP response from a PlayerWithResponse call
+func ParsePlayerResponse(rsp *http.Response) (*PlayerResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PlayerGetResponse{
+	response := &PlayerResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -747,13 +746,6 @@ func ParsePlayerCreateResponse(rsp *http.Response) (*PlayerCreateResponse, error
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Player
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

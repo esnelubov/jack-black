@@ -39,7 +39,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
 
-		resp, err := client.PlayerGetWithResponse(ctx, &http_api.PlayerGetParams{Login: login}, makeAuthFunc(password))
+		resp, err := client.PlayerWithResponse(ctx, &http_api.PlayerParams{Login: login}, makeAuthFunc(password))
 		if err != nil {
 			panic(err)
 		}
@@ -88,7 +88,7 @@ func startActionsLoop(sc *bufio.Scanner, client *http_api.ClientWithResponses, l
 	for {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
-		state, err := client.GameGetStateWithResponse(ctx, &http_api.GameGetStateParams{Login: login}, makeAuthFunc(password))
+		state, err := client.GameStateWithResponse(ctx, &http_api.GameStateParams{Login: login}, makeAuthFunc(password))
 		if err != nil {
 			panic(err)
 		}

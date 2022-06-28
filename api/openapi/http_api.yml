@@ -11,7 +11,7 @@ servers:
 paths:
   /player:
     get:
-      operationId: playerGet
+      operationId: player
       security:
         - ApiKeyAuth: []
       parameters:
@@ -52,11 +52,7 @@ paths:
               $ref: '#/components/schemas/PlayerCreatePayload'
       responses:
         '200':
-          description: Player data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Player'
+          description: The player created successfully
 
         '409':
           description: A player with the given login is already exists
@@ -134,7 +130,7 @@ paths:
 
   /game/state:
     get:
-      operationId: gameGetState
+      operationId: gameState
       security:
         - ApiKeyAuth: [ ]
       parameters:

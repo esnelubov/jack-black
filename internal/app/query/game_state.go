@@ -1,4 +1,4 @@
-package command
+package query
 
 import (
 	"context"
@@ -12,17 +12,17 @@ import (
 	"jackBlack/internal/ports/http_api"
 )
 
-type GameGetStateHandler struct {
+type GameStateHandler struct {
 	entryRepo   *entry.Repository
 	playerRepo  *player.Repository
 	sessionRepo *session.Repository
 }
 
-func NewGameGetStateHandler(entryRepo *entry.Repository, playerRepo *player.Repository, sessionRepo *session.Repository) *GameGetStateHandler {
-	return &GameGetStateHandler{entryRepo: entryRepo, playerRepo: playerRepo, sessionRepo: sessionRepo}
+func NewGameGetStateHandler(entryRepo *entry.Repository, playerRepo *player.Repository, sessionRepo *session.Repository) *GameStateHandler {
+	return &GameStateHandler{entryRepo: entryRepo, playerRepo: playerRepo, sessionRepo: sessionRepo}
 }
 
-func (h *GameGetStateHandler) Handle(ctx context.Context, password string, params *http_api.GameGetStateParams) (gameState *http_api.GameState, err error) {
+func (h *GameStateHandler) Handle(ctx context.Context, password string, params *http_api.GameStateParams) (gameState *http_api.GameState, err error) {
 	var (
 		playerAuthorized bool
 		playerModel      *pm.Model

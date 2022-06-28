@@ -1,4 +1,4 @@
-package command
+package query
 
 import (
 	"context"
@@ -9,16 +9,16 @@ import (
 	"jackBlack/internal/ports/http_api"
 )
 
-type PlayerGetHandler struct {
+type PlayerHandler struct {
 	entryRepo  *entry.Repository
 	playerRepo *player.Repository
 }
 
-func NewPlayerGetHandler(entryRepo *entry.Repository, playerRepo *player.Repository) *PlayerGetHandler {
-	return &PlayerGetHandler{entryRepo: entryRepo, playerRepo: playerRepo}
+func NewPlayerGetHandler(entryRepo *entry.Repository, playerRepo *player.Repository) *PlayerHandler {
+	return &PlayerHandler{entryRepo: entryRepo, playerRepo: playerRepo}
 }
 
-func (h *PlayerGetHandler) Handle(ctx context.Context, password string, params *http_api.PlayerGetParams) (player *http_api.Player, err error) {
+func (h *PlayerHandler) Handle(ctx context.Context, password string, params *http_api.PlayerParams) (player *http_api.Player, err error) {
 	var (
 		playerExists     bool
 		playerAuthorized bool

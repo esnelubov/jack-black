@@ -20,6 +20,25 @@ func NewHttpServer(application *app.Application) *HttpServer {
 	}
 }
 
+func (h *HttpServer) PlayerCreate(w http.ResponseWriter, r *http.Request) {
+	var (
+		body http_api.PlayerCreatePayload
+		err  error
+	)
+
+	if err = json.NewDecoder(r.Body).Decode(&body); err != nil {
+		respondWithError(w, r, err)
+		return
+	}
+
+	if err = h.app.Commands.PlayerCreate.Handle(r.Context(), &body); err != nil {
+		respondWithError(w, r, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func (h *HttpServer) GameMakeAction(w http.ResponseWriter, r *http.Request) {
 	var (
 		password string
@@ -45,7 +64,7 @@ func (h *HttpServer) GameMakeAction(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *HttpServer) GameGetState(w http.ResponseWriter, r *http.Request, params http_api.GameGetStateParams) {
+func (h *HttpServer) GameState(w http.ResponseWriter, r *http.Request, params http_api.GameStateParams) {
 	var (
 		password  string
 		gameState *http_api.GameState
@@ -57,7 +76,7 @@ func (h *HttpServer) GameGetState(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 
-	if gameState, err = h.app.Commands.GameGetState.Handle(r.Context(), password, &params); err != nil {
+	if gameState, err = h.app.Queries.GameState.Handle(r.Context(), password, &params); err != nil {
 		respondWithError(w, r, err)
 		return
 	}
@@ -66,7 +85,7 @@ func (h *HttpServer) GameGetState(w http.ResponseWriter, r *http.Request, params
 	render.JSON(w, r, gameState)
 }
 
-func (h *HttpServer) PlayerGet(w http.ResponseWriter, r *http.Request, params http_api.PlayerGetParams) {
+func (h *HttpServer) Player(w http.ResponseWriter, r *http.Request, params http_api.PlayerParams) {
 	var (
 		password string
 		player   *http_api.Player
@@ -78,28 +97,7 @@ func (h *HttpServer) PlayerGet(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	if player, err = h.app.Commands.PlayerGet.Handle(r.Context(), password, &params); err != nil {
-		respondWithError(w, r, err)
-		return
-	}
-
-	render.Status(r, http.StatusOK)
-	render.JSON(w, r, player)
-}
-
-func (h *HttpServer) PlayerCreate(w http.ResponseWriter, r *http.Request) {
-	var (
-		body   http_api.PlayerCreatePayload
-		player *http_api.Player
-		err    error
-	)
-
-	if err = json.NewDecoder(r.Body).Decode(&body); err != nil {
-		respondWithError(w, r, err)
-		return
-	}
-
-	if player, err = h.app.Commands.PlayerCreate.Handle(r.Context(), &body); err != nil {
+	if player, err = h.app.Queries.Player.Handle(r.Context(), password, &params); err != nil {
 		respondWithError(w, r, err)
 		return
 	}
@@ -120,7 +118,7 @@ func (h *HttpServer) PlayerStats(w http.ResponseWriter, r *http.Request, params 
 		return
 	}
 
-	if stats, err = h.app.Commands.PlayerStats.Handle(r.Context(), password, &params); err != nil {
+	if stats, err = h.app.Queries.PlayerStats.Handle(r.Context(), password, &params); err != nil {
 		respondWithError(w, r, err)
 		return
 	}

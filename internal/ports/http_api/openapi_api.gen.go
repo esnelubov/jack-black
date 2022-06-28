@@ -19,10 +19,10 @@ type ServerInterface interface {
 	GameMakeAction(w http.ResponseWriter, r *http.Request)
 
 	// (GET /game/state)
-	GameGetState(w http.ResponseWriter, r *http.Request, params GameGetStateParams)
+	GameState(w http.ResponseWriter, r *http.Request, params GameStateParams)
 
 	// (GET /player)
-	PlayerGet(w http.ResponseWriter, r *http.Request, params PlayerGetParams)
+	Player(w http.ResponseWriter, r *http.Request, params PlayerParams)
 
 	// (POST /player/create)
 	PlayerCreate(w http.ResponseWriter, r *http.Request)
@@ -57,8 +57,8 @@ func (siw *ServerInterfaceWrapper) GameMakeAction(w http.ResponseWriter, r *http
 	handler(w, r.WithContext(ctx))
 }
 
-// GameGetState operation middleware
-func (siw *ServerInterfaceWrapper) GameGetState(w http.ResponseWriter, r *http.Request) {
+// GameState operation middleware
+func (siw *ServerInterfaceWrapper) GameState(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -66,7 +66,7 @@ func (siw *ServerInterfaceWrapper) GameGetState(w http.ResponseWriter, r *http.R
 	ctx = context.WithValue(ctx, ApiKeyAuthScopes, []string{""})
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GameGetStateParams
+	var params GameStateParams
 
 	// ------------- Required query parameter "login" -------------
 	if paramValue := r.URL.Query().Get("login"); paramValue != "" {
@@ -83,7 +83,7 @@ func (siw *ServerInterfaceWrapper) GameGetState(w http.ResponseWriter, r *http.R
 	}
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GameGetState(w, r, params)
+		siw.Handler.GameState(w, r, params)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -93,8 +93,8 @@ func (siw *ServerInterfaceWrapper) GameGetState(w http.ResponseWriter, r *http.R
 	handler(w, r.WithContext(ctx))
 }
 
-// PlayerGet operation middleware
-func (siw *ServerInterfaceWrapper) PlayerGet(w http.ResponseWriter, r *http.Request) {
+// Player operation middleware
+func (siw *ServerInterfaceWrapper) Player(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -102,7 +102,7 @@ func (siw *ServerInterfaceWrapper) PlayerGet(w http.ResponseWriter, r *http.Requ
 	ctx = context.WithValue(ctx, ApiKeyAuthScopes, []string{""})
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params PlayerGetParams
+	var params PlayerParams
 
 	// ------------- Required query parameter "login" -------------
 	if paramValue := r.URL.Query().Get("login"); paramValue != "" {
@@ -119,7 +119,7 @@ func (siw *ServerInterfaceWrapper) PlayerGet(w http.ResponseWriter, r *http.Requ
 	}
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PlayerGet(w, r, params)
+		siw.Handler.Player(w, r, params)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -297,10 +297,10 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/game/action", wrapper.GameMakeAction)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/game/state", wrapper.GameGetState)
+		r.Get(options.BaseURL+"/game/state", wrapper.GameState)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/player", wrapper.PlayerGet)
+		r.Get(options.BaseURL+"/player", wrapper.Player)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/player/create", wrapper.PlayerCreate)

@@ -9,23 +9,24 @@ import (
 	"jackBlack/internal/adapters/gorm/repositories/player"
 	"jackBlack/internal/adapters/gorm/repositories/session"
 	"jackBlack/internal/app/command"
+	"jackBlack/internal/app/query"
 	"os"
 )
 
 type Application struct {
 	Commands Commands
+	Queries  Queries
 }
 
 type Commands struct {
-	PlayerGet *command.PlayerGetHandler
-
-	PlayerCreate *command.PlayerCreateHandler
-
-	PlayerStats *command.PlayerStatsHandler
-
+	PlayerCreate   *command.PlayerCreateHandler
 	GameMakeAction *command.GameMakeActionHandler
+}
 
-	GameGetState *command.GameGetStateHandler
+type Queries struct {
+	Player      *query.PlayerHandler
+	PlayerStats *query.PlayerStatsHandler
+	GameState   *query.GameStateHandler
 }
 
 func NewApplication(ctx context.Context) *Application {
@@ -52,11 +53,13 @@ func NewApplication(ctx context.Context) *Application {
 
 	return &Application{
 		Commands: Commands{
-			PlayerGet:      command.NewPlayerGetHandler(entryRepository, playerRepository),
 			PlayerCreate:   command.NewPlayerCreateHandler(entryRepository, playerRepository),
-			PlayerStats:    command.NewPlayerStatsHandler(entryRepository, playerRepository, historyRepository),
 			GameMakeAction: command.NewGameMakeActionHandler(entryRepository, playerRepository, sessionRepository, historyRepository),
-			GameGetState:   command.NewGameGetStateHandler(entryRepository, playerRepository, sessionRepository),
+		},
+		Queries: Queries{
+			Player:      query.NewPlayerGetHandler(entryRepository, playerRepository),
+			PlayerStats: query.NewPlayerStatsHandler(entryRepository, playerRepository, historyRepository),
+			GameState:   query.NewGameGetStateHandler(entryRepository, playerRepository, sessionRepository),
 		},
 	}
 }

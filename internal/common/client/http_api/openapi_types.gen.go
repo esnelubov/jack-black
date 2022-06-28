@@ -93,13 +93,13 @@ type StatsRecordResult string
 // GameMakeActionJSONBody defines parameters for GameMakeAction.
 type GameMakeActionJSONBody GameMakeActionPayload
 
-// GameGetStateParams defines parameters for GameGetState.
-type GameGetStateParams struct {
+// GameStateParams defines parameters for GameState.
+type GameStateParams struct {
 	Login string `json:"login"`
 }
 
-// PlayerGetParams defines parameters for PlayerGet.
-type PlayerGetParams struct {
+// PlayerParams defines parameters for Player.
+type PlayerParams struct {
 	Login string `json:"login"`
 }
 

@@ -17,25 +17,21 @@ func NewPlayerCreateHandler(entryRepo *entry.Repository, playerRepo *player.Repo
 	return &PlayerCreateHandler{entryRepo: entryRepo, playerRepo: playerRepo}
 }
 
-func (h *PlayerCreateHandler) Handle(ctx context.Context, body *http_api.PlayerCreatePayload) (player *http_api.Player, err error) {
+func (h *PlayerCreateHandler) Handle(ctx context.Context, body *http_api.PlayerCreatePayload) (err error) {
 	var (
 		playerExists bool
 	)
 
 	if playerExists, err = h.entryRepo.HasPlayer(body.Login); err != nil {
-		return nil, err
+		return err
 	}
 
 	if playerExists {
-		return nil, generic_errors.ErrLoginAlreadyTaken
+		return generic_errors.ErrLoginAlreadyTaken
 	}
 
 	if err = h.entryRepo.CreatePlayer(body.Login, body.Password); err != nil {
-		return nil, err
-	}
-
-	player = &http_api.Player{
-		Balance: 0,
+		return err
 	}
 
 	return
